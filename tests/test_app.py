@@ -21,6 +21,8 @@ from pathlib import Path
 from app import app, student_manager
 from routes.student_manager import StudentManager
 
+DB_FILE = Path(student_manager.db_file)
+
 # ==================== PYTEST FIXTURES ====================
 
 @pytest.fixture
@@ -37,8 +39,8 @@ def client():
         yield client
     
     # Cleanup: remove test database
-    if os.path.exists('students_db.json'):
-        os.remove('students_db.json')
+    if DB_FILE.exists():
+        DB_FILE.unlink()
 
 
 @pytest.fixture
@@ -48,8 +50,8 @@ def student_mgr():
     Provides a fresh StudentManager instance for each test
     """
     # Cleanup before test
-    if os.path.exists('students_db.json'):
-        os.remove('students_db.json')
+    if DB_FILE.exists():
+        DB_FILE.unlink()
     
     # Create new manager
     manager = StudentManager()
@@ -57,8 +59,8 @@ def student_mgr():
     yield manager
     
     # Cleanup after test
-    if os.path.exists('students_db.json'):
-        os.remove('students_db.json')
+    if DB_FILE.exists():
+        DB_FILE.unlink()
 
 
 @pytest.fixture
@@ -109,7 +111,7 @@ class TestStudentManager:
     def test_initialization(self, student_mgr):
         """Test StudentManager initializes correctly"""
         assert student_mgr is not None
-        assert os.path.exists('students_db.json')
+        assert DB_FILE.exists()
     
     def test_add_student(self, student_mgr, sample_student):
         """Test adding a student"""

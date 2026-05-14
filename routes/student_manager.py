@@ -1,39 +1,24 @@
 """
 Student Manager Module
-Handles CRUD operations for students
+Handles all student-related database operations (CRUD operations)
+
+This module provides an abstraction layer for student data management.
+It uses a JSON file so the project can run locally and inside AWS CodeBuild
+without needing an external database service.
 """
 
 import json
+import logging
 import os
 from datetime import datetime
-import logging
+from pathlib import Path
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
-# ================================
-# DATABASE CONFIGURATION
-# ================================
-
-# Get absolute project root directory
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-
-# Database file path
-DATABASE_FILE = os.path.join(BASE_DIR, "students_db.json")
-
-# Automatically create database file if missing
-if not os.path.exists(DATABASE_FILE):
-
-    initial_data = {
-        "students": [],
-        "next_id": 1,
-        "created_at": datetime.now().isoformat()
-    }
-
-    with open(DATABASE_FILE, "w") as f:
-        json.dump(initial_data, f, indent=2)
-
-    logger.info(f"Database created at: {DATABASE_FILE}")
+# Database file path - stored in the project root so it works on Windows and Linux.
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DATABASE_FILE = Path(os.getenv("STUDENTS_DB_FILE", PROJECT_ROOT / "students_db.json"))
 
 
 class StudentManager:
@@ -43,7 +28,39 @@ class StudentManager:
     """
 
     def __init__(self):
-        self.db_file = DATABASE_FILE
+        self.db_file = Path(DATABASE_FILE)
+        self._initialize_database()
+
+    def _empty_database(self):
+        """Create the default database structure."""
+        return {
+            "students": [],
+            "next_id": 1,
+            "created_at": datetime.now().isoformat()
+        }
+
+    def _ensure_database_exists(self):
+        """
+        Create the database file if it was deleted.
+
+        AWS CodeBuild and the test suite can start from a clean workspace, so
+        every read/write path should recreate the file when needed.
+        """
+        self.db_file.parent.mkdir(parents=True, exist_ok=True)
+
+        if not self.db_file.exists():
+            with open(self.db_file, "w", encoding="utf-8") as f:
+                json.dump(self._empty_database(), f, indent=2)
+
+            logger.info(f"Database created at: {self.db_file}")
+
+    def _initialize_database(self):
+        """Initialize the database file if it is missing."""
+        try:
+            self._ensure_database_exists()
+        except Exception as e:
+            logger.error(f"Error initializing database: {str(e)}")
+            raise
 
     # ================================
     # LOAD DATABASE
@@ -51,7 +68,9 @@ class StudentManager:
     def _load_database(self):
 
         try:
-            with open(self.db_file, "r") as f:
+            self._ensure_database_exists()
+
+            with open(self.db_file, "r", encoding="utf-8") as f:
                 return json.load(f)
 
         except Exception as e:
@@ -64,7 +83,9 @@ class StudentManager:
     def _save_database(self, data):
 
         try:
-            with open(self.db_file, "w") as f:
+            self._ensure_database_exists()
+
+            with open(self.db_file, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2)
 
             logger.info("Database saved successfully")

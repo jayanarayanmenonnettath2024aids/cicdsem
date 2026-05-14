@@ -222,7 +222,7 @@ def edit_student(student_id):
                 logger.info(f"Student updated successfully: ID {student_id}")
                 return redirect(url_for('view_students'))
             else:
-                raise ValueError("Failed to update student")
+                return render_template('error.html', error=f"Student with ID {student_id} not found"), 404
         
         except Exception as e:
             logger.error(f"Error updating student: {str(e)}")
@@ -265,7 +265,7 @@ def delete_student(student_id):
             logger.info(f"Student deleted successfully: ID {student_id}")
             return redirect(url_for('view_students'))
         else:
-            raise ValueError("Failed to delete student")
+            return render_template('error.html', error=f"Student with ID {student_id} not found"), 404
     
     except Exception as e:
         logger.error(f"Error deleting student: {str(e)}")

@@ -97,7 +97,6 @@ Desktop.ini
 
 # ==================== PROJECT ====================
 # Database files
-students_db.json
 *.db
 *.sqlite
 *.sqlite3
