@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Student Management System{% endblock %}
+
+{% block content %}
+<!-- Dashboard Page Content -->
+<div class="page-header">
+    <h1>Dashboard</h1>
+    <p>Welcome to the Student Management System</p>
+</div>
+
+<!-- Statistics Section -->
+<section class="stats-section">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-content">
+            <h3>Total Students</h3>
+            <p class="stat-number">{{ total_students }}</p>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-user-plus"></i>
+        </div>
+        <div class="stat-content">
+            <h3>Add Student</h3>
+            <a href="{{ url_for('add_student') }}" class="stat-link">Go to Form</a>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-list"></i>
+        </div>
+        <div class="stat-content">
+            <h3>View Students</h3>
+            <a href="{{ url_for('view_students') }}" class="stat-link">View List</a>
+        </div>
+    </div>
+</section>
+
+<!-- Welcome Message -->
+<section class="welcome-section">
+    <h2>Welcome to the System</h2>
+    <p>This is a demonstration project showcasing:</p>
+    <ul>
+        <li>Python Flask web application</li>
+        <li>Modern responsive UI design</li>
+        <li>Automated testing with pytest</li>
+        <li>AWS CodeBuild integration</li>
+        <li>GitHub Actions CI/CD pipeline</li>
+        <li>Docker containerization</li>
+        <li>Production-ready code structure</li>
+    </ul>
+</section>
+
+<!-- Quick Actions -->
+<section class="quick-actions">
+    <h2>Quick Actions</h2>
+    <div class="action-buttons">
+        <a href="{{ url_for('add_student') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add New Student
+        </a>
+        <a href="{{ url_for('view_students') }}" class="btn btn-secondary">
+            <i class="fas fa-eye"></i> View All Students
+        </a>
+        <a href="{{ url_for('health_check') }}" class="btn btn-info">
+            <i class="fas fa-heart"></i> Health Check
+        </a>
+    </div>
+</section>
+
+<!-- Information Section -->
+<section class="info-section">
+    <h2>System Information</h2>
+    <div class="info-grid">
+        <div class="info-card">
+            <h3>Database</h3>
+            <p>JSON-based file storage (students_db.json)</p>
+        </div>
+        <div class="info-card">
+            <h3>Technology Stack</h3>
+            <p>Python 3, Flask, HTML5, CSS3, JavaScript</p>
+        </div>
+        <div class="info-card">
+            <h3>Deployment</h3>
+            <p>Docker | AWS CodeBuild | GitHub Actions</p>
+        </div>
+        <div class="info-card">
+            <h3>Testing</h3>
+            <p>pytest framework with unit and integration tests</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

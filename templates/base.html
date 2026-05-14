@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!-- 
+    Base Template - Shared layout for all pages
+    This template provides a consistent look and feel across the application
+    All other templates extend this base template
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Viewport meta tag for responsive design on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Page Title -->
+    <title>{% block title %}Student Management System{% endblock %}</title>
+    
+    <!-- Link to main CSS stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <!-- Font Awesome icons library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Logo/Brand -->
+            <div class="nav-brand">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Student Management System</span>
+            </div>
+            
+            <!-- Navigation Links -->
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a></li>
+                <li><a href="{{ url_for('view_students') }}" class="nav-link">Students</a></li>
+                <li><a href="{{ url_for('add_student') }}" class="nav-link">Add Student</a></li>
+                <li><a href="{{ url_for('health_check') }}" class="nav-link">Health</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- Main Content Container -->
+    <main class="container">
+        {% block content %}
+        <!-- Individual page content goes here -->
+        {% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Student Management System - DevOps CI/CD Demo Project</p>
+            <p>Built with Python, Flask, and AWS</p>
+        </div>
+    </footer>
+    
+    <!-- JavaScript file -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

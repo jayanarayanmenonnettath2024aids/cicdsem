@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Add Student - Student Management System{% endblock %}
+
+{% block content %}
+<!-- Add Student Page -->
+<div class="page-header">
+    <h1>Add New Student</h1>
+    <p>Fill in the form below to add a new student</p>
+</div>
+
+<!-- Form to Add Student -->
+<div class="form-container">
+    <form method="POST" class="student-form" id="addStudentForm">
+        <!-- Name Field -->
+        <div class="form-group">
+            <label for="name">Full Name <span class="required">*</span></label>
+            <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                class="form-control" 
+                placeholder="Enter student's full name"
+                required
+                minlength="2"
+                maxlength="100"
+            >
+            <small>Required. Minimum 2 characters.</small>
+        </div>
+        
+        <!-- Email Field -->
+        <div class="form-group">
+            <label for="email">Email Address <span class="required">*</span></label>
+            <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                class="form-control" 
+                placeholder="Enter student's email"
+                required
+            >
+            <small>Required. Must be a valid email address.</small>
+        </div>
+        
+        <!-- Phone Field -->
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input 
+                type="tel" 
+                id="phone" 
+                name="phone" 
+                class="form-control" 
+                placeholder="Enter student's phone number"
+            >
+            <small>Optional. Format: +1-234-567-8900</small>
+        </div>
+        
+        <!-- Grade Field -->
+        <div class="form-group">
+            <label for="grade">Current Grade/Year</label>
+            <select id="grade" name="grade" class="form-control">
+                <option value="">Select Grade</option>
+                <option value="Freshman">Freshman</option>
+                <option value="Sophomore">Sophomore</option>
+                <option value="Junior">Junior</option>
+                <option value="Senior">Senior</option>
+                <option value="Graduate">Graduate</option>
+            </select>
+            <small>Optional. Select student's current grade.</small>
+        </div>
+        
+        <!-- Major Field -->
+        <div class="form-group">
+            <label for="major">Major/Field of Study</label>
+            <input 
+                type="text" 
+                id="major" 
+                name="major" 
+                class="form-control" 
+                placeholder="e.g., Computer Science, Business Administration"
+            >
+            <small>Optional. Enter student's major or field of study.</small>
+        </div>
+        
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-check"></i> Add Student
+            </button>
+            
+            <!-- Cancel Button -->
+            <a href="{{ url_for('view_students') }}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Information Section -->
+<section class="form-info">
+    <h3>Form Instructions</h3>
+    <ul>
+        <li>Fields marked with <span class="required">*</span> are required</li>
+        <li>Email must be unique and valid</li>
+        <li>Data is automatically saved to the database</li>
+        <li>You can edit or delete the student later</li>
+    </ul>
+</section>
+
+<!-- JavaScript for form validation -->
+<script>
+    // Form validation when submitted
+    document.getElementById('addStudentForm').addEventListener('submit', function(e) {
+        // Check if name is empty
+        const name = document.getElementById('name').value.trim();
+        if (!name) {
+            e.preventDefault();
+            alert('Please enter student name');
+            return;
+        }
+        
+        // Check if email is empty
+        const email = document.getElementById('email').value.trim();
+        if (!email) {
+            e.preventDefault();
+            alert('Please enter student email');
+            return;
+        }
+        
+        // Show loading message
+        console.log('Form submitted successfully');
+    });
+</script>
+{% endblock %}

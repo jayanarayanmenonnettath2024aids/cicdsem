@@ -1,0 +1,53 @@
+# Docker Compose Configuration
+# Use this for local development with services like database
+
+version: '3.8'
+
+services:
+  # Main Flask Application
+  app:
+    # Build from Dockerfile
+    build: .
+    
+    # Container name
+    container_name: student-management-app
+    
+    # Port mapping
+    ports:
+      - "5000:5000"
+    
+    # Environment variables
+    environment:
+      FLASK_ENV: development
+      DEBUG: "True"
+      PORT: 5000
+    
+    # Volume mounting for live development
+    volumes:
+      - .:/app
+      - /app/__pycache__
+    
+    # Keep container running
+    stdin_open: true
+    tty: true
+    
+    # Restart policy
+    restart: unless-stopped
+
+  # Optional: Database Service (uncomment to use)
+  # db:
+  #   image: postgres:15-alpine
+  #   container_name: student-db
+  #   environment:
+  #     POSTGRES_DB: student_db
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   restart: unless-stopped
+
+# Volumes (uncomment if using database)
+# volumes:
+#   postgres_data:

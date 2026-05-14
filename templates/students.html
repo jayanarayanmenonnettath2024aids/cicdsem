@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Students - Student Management System{% endblock %}
+
+{% block content %}
+<!-- Students List Page -->
+<div class="page-header">
+    <h1>Student List</h1>
+    <p>All registered students</p>
+</div>
+
+<!-- Add Student Button -->
+<div class="action-bar">
+    <a href="{{ url_for('add_student') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Add New Student
+    </a>
+</div>
+
+<!-- Students Table or Message -->
+{% if students %}
+    <!-- Table for displaying students -->
+    <div class="table-responsive">
+        <table class="students-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Grade</th>
+                    <th>Major</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through each student and display in table row -->
+                {% for student in students %}
+                <tr class="student-row" data-student-id="{{ student.id }}">
+                    <td class="id-cell">{{ student.id }}</td>
+                    <td class="name-cell">{{ student.name }}</td>
+                    <td class="email-cell">{{ student.email }}</td>
+                    <td class="phone-cell">{{ student.phone or 'N/A' }}</td>
+                    <td class="grade-cell">{{ student.grade or 'N/A' }}</td>
+                    <td class="major-cell">{{ student.major or 'N/A' }}</td>
+                    <td class="actions-cell">
+                        <!-- Edit Button -->
+                        <a href="{{ url_for('edit_student', student_id=student.id) }}" 
+                           class="btn btn-sm btn-edit" 
+                           title="Edit student">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        
+                        <!-- Delete Button -->
+                        <form action="{{ url_for('delete_student', student_id=student.id) }}" 
+                              method="POST" 
+                              class="delete-form" 
+                              onsubmit="return confirm('Are you sure you want to delete this student?');">
+                            <button type="submit" class="btn btn-sm btn-delete" title="Delete student">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Summary -->
+    <div class="summary">
+        <p>Total Students: <strong>{{ students|length }}</strong></p>
+    </div>
+
+{% else %}
+    <!-- Empty State - No Students Message -->
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h2>No Students Found</h2>
+        <p>There are no students in the system yet.</p>
+        <a href="{{ url_for('add_student') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add First Student
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

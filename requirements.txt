@@ -1,0 +1,39 @@
+# Flask - Web framework for Python
+# Used to build the web application with routing and templating
+Flask==2.3.2
+
+# Gunicorn - Production WSGI HTTP Server
+# Used to run Flask app in production (Docker, AWS, etc.)
+gunicorn==21.2.0
+
+# Pytest - Testing framework
+# Used for unit testing and integration testing
+pytest==7.4.0
+
+# Python-dotenv - Load environment variables from .env file
+# Used for managing configuration in development and production
+python-dotenv==1.0.0
+
+# Werkzeug - WSGI utilities and security tools
+# Already included with Flask, but explicitly listed for clarity
+Werkzeug==2.3.6
+
+# Click - Command-line interface framework
+# Already included with Flask, but explicitly listed for clarity
+Click==8.1.3
+
+# Jinja2 - Template engine
+# Used for rendering HTML templates in Flask
+Jinja2==3.1.2
+
+# ItsDangerous - Security utilities
+# Already included with Flask, but explicitly listed for clarity
+ItsDangerous==2.1.2
+
+# Requests - HTTP library for Python
+# Optional: Used in tests for making HTTP requests
+requests==2.31.0
+
+# Flask-Testing - Provides testing utilities for Flask
+# Makes testing Flask applications easier
+Flask-Testing==0.8.1
