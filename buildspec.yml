@@ -1,150 +1,31 @@
-"""
-AWS CodeBuild Configuration for CI/CD Pipeline
-
-This file defines the build process for AWS CodeBuild:
-1. Install dependencies from requirements.txt
-2. Run pytest to execute all tests
-3. Start application to ensure it runs
-4. Generate logs and build artifacts
-
-CodeBuild Phases:
-- pre_build: Install dependencies
-- build: Run tests
-- post_build: Start app and create logs
-"""
-
 version: 0.2
 
-# ==================== PHASES ====================
-
 phases:
-  # Phase 1: Pre-build - Install dependencies
   pre_build:
     commands:
       - echo "========== PRE-BUILD PHASE =========="
-      - echo "Starting pre-build tasks..."
-      - echo "Python version:"
       - python --version
-      - echo "pip version:"
-      - pip --version
-      - echo "Installing dependencies from requirements.txt..."
       - pip install -r requirements.txt
-      - echo "Dependencies installed successfully"
-      - echo "Pre-build phase completed"
 
-  # Phase 2: Build - Run tests
   build:
     commands:
       - echo "========== BUILD PHASE =========="
-      - echo "Starting build tasks..."
-      - echo "Running pytest for unit tests..."
-      - pytest tests/ -v --tb=short --color=yes 2>&1 | tee test_results.log
-      - echo "Tests completed"
-      - echo "Running pytest with coverage..."
-      - pytest tests/ --cov=. --cov-report=html --cov-report=term 2>&1 | tee coverage_results.log
-      - echo "Coverage report generated"
-      - echo "Build phase completed"
+      - pytest tests/ -v
 
-  # Phase 3: Post-build - Additional tasks
   post_build:
     commands:
       - echo "========== POST-BUILD PHASE =========="
-      - echo "Starting post-build tasks..."
-      - echo "Build status: $CODEBUILD_BUILD_SUCCEEDING"
-      - |
-        if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
-          echo "✓ Build SUCCESSFUL"
-          BUILD_STATUS="PASSED"
-        else
-          echo "✗ Build FAILED"
-          BUILD_STATUS="FAILED"
-        fi
-      - echo "Build status: $BUILD_STATUS"
-      - echo "Creating build summary..."
-      - |
-        cat > build_summary.txt << EOF
-        ==========================================
-        BUILD SUMMARY REPORT
-        ==========================================
-        Build Status: $BUILD_STATUS
-        Build ID: $CODEBUILD_BUILD_ID
-        Build Number: $CODEBUILD_BUILD_NUMBER
-        Build Timestamp: $(date)
-        Repository: $CODEBUILD_SOURCE_REPO_URL
-        Branch: $CODEBUILD_SOURCE_VERSION
-        Commit: $CODEBUILD_RESOLVED_SOURCE_VERSION
-        
-        Artifacts:
-        - Application source code
-        - Test results (test_results.log)
-        - Coverage report (coverage_results.log)
-        - Build summary (build_summary.txt)
-        
-        Next Steps:
-        - Deploy to development environment
-        - Run integration tests
-        - Deploy to production (if approved)
-        ==========================================
-        EOF
-      - cat build_summary.txt
-      - echo "Post-build phase completed"
-
-# ==================== ARTIFACTS ====================
+      - echo "Build completed successfully"
 
 artifacts:
-  # Define files to keep after build
   files:
-    # Application source files
-    - app.py
-    - requirements.txt
-    - routes/**/*
-    - templates/**/*
-    - static/**/*
-    - tests/**/*
-    - Dockerfile
-    - buildspec.yml
-    
-    # Build logs and reports
-    - test_results.log
-    - coverage_results.log
-    - build_summary.txt
-    - htmlcov/**/*
-
-# ==================== CACHE ====================
+    - '**/*'
 
 cache:
-  # Cache dependencies to speed up future builds
   paths:
-    # Cache Python packages
     - '/root/.cache/pip/**/*'
 
-# ==================== ENVIRONMENT VARIABLES ====================
-
 env:
-  # Variables used during build
   variables:
-    # Application environment
     FLASK_ENV: production
     PYTHONUNBUFFERED: 1
-  
-  # Parameter Store variables (commented out - uncomment to use)
-  # parameter-store:
-  #   DB_PASSWORD: /app/db/password
-  
-  # Secrets Manager variables (commented out - uncomment to use)
-  # secrets-manager:
-  #   AWS_ACCESS_KEY_ID: my-aws-credentials:access-key-id
-  #   AWS_SECRET_ACCESS_KEY: my-aws-credentials:secret-access-key
-
-# ==================== LOGS ====================
-
-logs:
-  # CloudWatch Logs configuration
-  cloudwatch-logs:
-    group-name: /aws/codebuild/student-management-ci
-    stream-name: build-logs
-  
-  # S3 logs (optional)
-  # s3-logs:
-  #   status: ENABLED
-  #   location: my-bucket/build-logs
