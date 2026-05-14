@@ -1,6 +1,6 @@
 """
 Student Manager Module
-Handles all student-related database operations (CRUD operations)
+Handles CRUD operations for students
 """
 
 import json
@@ -11,52 +11,45 @@ import logging
 # Configure logging
 logger = logging.getLogger(__name__)
 
-# Get absolute path to project root
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# ================================
+# DATABASE CONFIGURATION
+# ================================
+
+# Get absolute project root directory
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 # Database file path
-DATABASE_FILE = os.path.join(BASE_DIR, "..", "students_db.json")
+DATABASE_FILE = os.path.join(BASE_DIR, "students_db.json")
+
+# Automatically create database file if missing
+if not os.path.exists(DATABASE_FILE):
+
+    initial_data = {
+        "students": [],
+        "next_id": 1,
+        "created_at": datetime.now().isoformat()
+    }
+
+    with open(DATABASE_FILE, "w") as f:
+        json.dump(initial_data, f, indent=2)
+
+    logger.info(f"Database created at: {DATABASE_FILE}")
 
 
 class StudentManager:
     """
     Student Manager Class
-    Handles CRUD operations for students
+    Handles all CRUD operations
     """
 
     def __init__(self):
-        """
-        Initialize database
-        """
         self.db_file = DATABASE_FILE
-        self._initialize_database()
 
-    def _initialize_database(self):
-        """
-        Create database file if it doesn't exist
-        """
-        try:
-            if not os.path.exists(self.db_file):
-
-                initial_data = {
-                    "students": [],
-                    "next_id": 1,
-                    "created_at": datetime.now().isoformat()
-                }
-
-                with open(self.db_file, "w") as f:
-                    json.dump(initial_data, f, indent=2)
-
-                logger.info(f"Database initialized: {self.db_file}")
-
-        except Exception as e:
-            logger.error(f"Error initializing database: {str(e)}")
-            raise
-
+    # ================================
+    # LOAD DATABASE
+    # ================================
     def _load_database(self):
-        """
-        Load database from JSON file
-        """
+
         try:
             with open(self.db_file, "r") as f:
                 return json.load(f)
@@ -65,10 +58,11 @@ class StudentManager:
             logger.error(f"Error loading database: {str(e)}")
             raise
 
+    # ================================
+    # SAVE DATABASE
+    # ================================
     def _save_database(self, data):
-        """
-        Save database to JSON file
-        """
+
         try:
             with open(self.db_file, "w") as f:
                 json.dump(data, f, indent=2)
@@ -79,13 +73,18 @@ class StudentManager:
             logger.error(f"Error saving database: {str(e)}")
             raise
 
+    # ================================
+    # ADD STUDENT
+    # ================================
     def add_student(self, student_data):
-        """
-        Add a new student
-        """
+
         try:
-            if not student_data.get("name") or not student_data.get("email"):
-                raise ValueError("Name and Email are required")
+
+            if not student_data.get("name"):
+                raise ValueError("Student name is required")
+
+            if not student_data.get("email"):
+                raise ValueError("Student email is required")
 
             db = self._load_database()
 
@@ -101,6 +100,7 @@ class StudentManager:
             }
 
             db["students"].append(new_student)
+
             db["next_id"] += 1
 
             self._save_database(db)
@@ -113,10 +113,11 @@ class StudentManager:
             logger.error(f"Error adding student: {str(e)}")
             raise
 
+    # ================================
+    # GET ALL STUDENTS
+    # ================================
     def get_all_students(self):
-        """
-        Get all students
-        """
+
         try:
             db = self._load_database()
             return db.get("students", [])
@@ -125,14 +126,17 @@ class StudentManager:
             logger.error(f"Error getting students: {str(e)}")
             raise
 
+    # ================================
+    # GET STUDENT BY ID
+    # ================================
     def get_student_by_id(self, student_id):
-        """
-        Get student by ID
-        """
+
         try:
+
             db = self._load_database()
 
             for student in db.get("students", []):
+
                 if student["id"] == int(student_id):
                     return student
 
@@ -142,27 +146,49 @@ class StudentManager:
             logger.error(f"Error getting student: {str(e)}")
             raise
 
+    # ================================
+    # UPDATE STUDENT
+    # ================================
     def update_student(self, student_id, updated_data):
-        """
-        Update student details
-        """
+
         try:
+
             db = self._load_database()
 
             for student in db.get("students", []):
 
                 if student["id"] == int(student_id):
 
-                    student["name"] = updated_data.get("name", student["name"])
-                    student["email"] = updated_data.get("email", student["email"])
-                    student["phone"] = updated_data.get("phone", student["phone"])
-                    student["grade"] = updated_data.get("grade", student["grade"])
-                    student["major"] = updated_data.get("major", student["major"])
+                    student["name"] = updated_data.get(
+                        "name",
+                        student["name"]
+                    )
+
+                    student["email"] = updated_data.get(
+                        "email",
+                        student["email"]
+                    )
+
+                    student["phone"] = updated_data.get(
+                        "phone",
+                        student["phone"]
+                    )
+
+                    student["grade"] = updated_data.get(
+                        "grade",
+                        student["grade"]
+                    )
+
+                    student["major"] = updated_data.get(
+                        "major",
+                        student["major"]
+                    )
+
                     student["updated_at"] = datetime.now().isoformat()
 
                     self._save_database(db)
 
-                    logger.info(f"Student updated: ID {student_id}")
+                    logger.info(f"Student updated: {student_id}")
 
                     return student
 
@@ -172,11 +198,13 @@ class StudentManager:
             logger.error(f"Error updating student: {str(e)}")
             raise
 
+    # ================================
+    # DELETE STUDENT
+    # ================================
     def delete_student(self, student_id):
-        """
-        Delete student
-        """
+
         try:
+
             db = self._load_database()
 
             for i, student in enumerate(db.get("students", [])):
@@ -187,7 +215,7 @@ class StudentManager:
 
                     self._save_database(db)
 
-                    logger.info(f"Student deleted: ID {student_id}")
+                    logger.info(f"Student deleted: {student_id}")
 
                     return True
 
@@ -197,23 +225,28 @@ class StudentManager:
             logger.error(f"Error deleting student: {str(e)}")
             raise
 
+    # ================================
+    # GET STUDENT COUNT
+    # ================================
     def get_student_count(self):
-        """
-        Get total student count
-        """
+
         try:
+
             db = self._load_database()
+
             return len(db.get("students", []))
 
         except Exception as e:
             logger.error(f"Error getting count: {str(e)}")
             return 0
 
+    # ================================
+    # SEARCH STUDENTS
+    # ================================
     def search_students(self, query):
-        """
-        Search students
-        """
+
         try:
+
             db = self._load_database()
 
             query_lower = query.lower()
@@ -230,11 +263,13 @@ class StudentManager:
             logger.error(f"Error searching students: {str(e)}")
             return []
 
+    # ================================
+    # CLEAR DATABASE
+    # ================================
     def clear_all_students(self):
-        """
-        Clear database
-        """
+
         try:
+
             db = self._load_database()
 
             db["students"] = []
@@ -242,7 +277,7 @@ class StudentManager:
 
             self._save_database(db)
 
-            logger.warning("Database cleared")
+            logger.warning("All students cleared")
 
             return True
 
