@@ -139,3 +139,6 @@ tmp/
 build_summary.txt
 test_results.log
 coverage_results.log
+
+# Nested workspace copy
+student-management-ci/
